@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Main Menu for Inventory Count -->
+    <menuitem id="menu_inventory_count_root" 
+              name="Inventory Count" 
+              parent="stock.menu_stock_root" 
+              sequence="50"
+              groups="stock.group_stock_user"/>
+
+    <!-- Sub-menus -->
+    <menuitem id="menu_inventory_count_sessions" 
+              name="Count Sessions" 
+              action="action_inventory_count_session" 
+              parent="menu_inventory_count_root" 
+              sequence="10"/>
+              
+    <menuitem id="menu_inventory_count_lines" 
+              name="Count Lines" 
+              action="action_inventory_count_line" 
+              parent="menu_inventory_count_root" 
+              sequence="20"/>
+
+</odoo>

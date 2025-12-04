@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Count Sheet Report -->
+    <record id="action_report_count_sheet" model="ir.actions.report">
+        <field name="name">Count Sheet</field>
+        <field name="model">inventory.count.session</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">cbs_inventory_count.report_count_sheet</field>
+        <field name="report_file">cbs_inventory_count.report_count_sheet</field>
+        <field name="binding_model_id" ref="model_inventory_count_session"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Count Sheet - %s' % (object.name)</field>
+    </record>
+
+    <!-- Count Sheet Template -->
+    <template id="report_count_sheet">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <style>
+                            .count-sheet-table tbody tr {
+                                border-bottom: 2px solid #000 !important;
+                            }
+                            .count-sheet-table tbody tr td {
+                                padding: 8px !important;
+                            }
+                        </style>
+                            
+                            <h2>Inventory Count Sheet</h2>
+                            
+                            <div class="row mt32 mb32">
+                                <div class="col-6">
+                                    <strong>Session:</strong> <span t-field="doc.name"/><br/>
+                                    <strong>Warehouse:</strong> <span t-field="doc.warehouse_id.name"/><br/>
+                                    <strong>Location:</strong> <span t-field="doc.location_id.complete_name"/><br/>
+                                    <strong>Count Date:</strong> <span t-field="doc.count_effective_date"/><br/>
+                                </div>
+                                <div class="col-6">
+                                    <strong>Owner:</strong> <span t-field="doc.user_id.name"/><br/>
+                                    <strong>Attendees:</strong> 
+                                    <span t-foreach="doc.attendee_ids" t-as="attendee">
+                                        <span t-field="attendee.name"/><t t-if="not attendee_last">, </t>
+                                    </span><br/>
+                                    <strong>State:</strong> <span t-field="doc.state"/><br/>
+                                </div>
+                            </div>
+
+                            <table class="table table-sm table-bordered count-sheet-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Location</th>
+                                        <th>Lot/Serial</th>
+                                        <th>Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.line_ids" t-as="line">
+                                        <tr>
+                                            <td><span t-field="line.product_id.display_name"/></td>
+                                            <td><span t-field="line.location_id.complete_name"/></td>
+                                            <td><span t-field="line.lot_id.name"/></td>
+                                            <td class="text-right"><span t-field="line.qty_counted"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                        <div class="row mt32">
+                            <div class="col-12">
+                                <strong>Total Lines:</strong> <span t-field="doc.line_count"/><br/>
+                                <strong>Total Counted:</strong> <span t-field="doc.qty_counted_total"/><br/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Final Count Report -->
+    <record id="action_report_final_count" model="ir.actions.report">
+        <field name="name">Final Count Report</field>
+        <field name="model">inventory.count.session</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">cbs_inventory_count.report_final_count</field>
+        <field name="report_file">cbs_inventory_count.report_final_count</field>
+        <field name="binding_model_id" ref="model_inventory_count_session"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Final Count - %s' % (object.name)</field>
+        <field name="groups_id" eval="[(4, ref('account.group_account_manager')), (4, ref('base.group_system'))]"/>
+
+
+    </record>
+
+    <!-- Final Count Report Template -->
+    <template id="report_final_count">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <style>
+                            .final-count-table tbody tr {
+                                border-bottom: 2px solid #000 !important;
+                            }
+                            .final-count-table tbody tr td {
+                                padding: 8px !important;
+                            }
+                        </style>
+                            
+                            <h2>Final Inventory Count Report</h2>
+                        
+                        <div class="row mt32 mb32">
+                            <div class="col-6">
+                                <strong>Session:</strong> <span t-field="doc.name"/><br/>
+                                <strong>Warehouse:</strong> <span t-field="doc.warehouse_id.name"/><br/>
+                                <strong>Location:</strong> <span t-field="doc.location_id.complete_name"/><br/>
+                                <strong>Count Effective Date:</strong> <span t-field="doc.count_effective_date"/><br/>
+                                <strong>Filter:</strong> <span t-field="doc.inventory_filter"/><br/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Owner:</strong> <span t-field="doc.user_id.name"/><br/>
+                                <strong>Finance Manager:</strong> <span t-field="doc.finance_manager_id.name"/><br/>
+                                <strong>Attendees:</strong> 
+                                <span t-foreach="doc.attendee_ids" t-as="attendee">
+                                    <span t-field="attendee.name"/><t t-if="not attendee_last">, </t>
+                                </span><br/>
+                                <strong>State:</strong> <span t-field="doc.state"/><br/>
+                                <strong>Review Date:</strong> <span t-field="doc.review_date"/><br/>
+                                <strong>Approval Date:</strong> <span t-field="doc.approval_date"/><br/>
+                            </div>
+                        </div>
+
+                        <h4>Calculated Outcomes</h4>
+                        <div class="row mb16">
+                            <div class="col-4">
+                                <strong>Total Diff Qty - Positive:</strong> <span t-field="doc.total_diff_qty_positive"/><br/>
+                                <strong>Total Diff Qty - Negative:</strong> <span t-field="doc.total_diff_qty_negative"/><br/>
+                            </div>
+                            <div class="col-4">
+                                <strong>Total Diff Value - Positive:</strong> <span t-field="doc.total_diff_value_positive"/><br/>
+                                <strong>Total Diff Value - Negative:</strong> <span t-field="doc.total_diff_value_negative"/><br/>
+                                <strong>Total Diff Value - Net:</strong> <span t-field="doc.total_diff_value_net"/><br/>
+                            </div>
+                            <div class="col-4">
+                                <strong>Total Review Value - Positive:</strong> <span t-field="doc.total_diff_review_value_positive"/><br/>
+                                <strong>Total Review Value - Negative:</strong> <span t-field="doc.total_diff_review_value_negative"/><br/>
+                                <strong>Total Review Value - Net:</strong> <span t-field="doc.total_diff_review_value_net"/><br/>
+                            </div>
+                        </div>
+
+                        <h4>Count Details</h4>
+                        <table class="table table-sm table-bordered final-count-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Location</th>
+                                    <th>Lot/Serial</th>
+                                    <th>System Qty</th>
+                                    <th>Counted Qty</th>
+                                    <th>Review Qty</th>
+                                    <th>Delta</th>
+                                    <th>Value Before</th>
+                                    <th>Diff Value</th>
+                                    <th>Variant %</th>
+                                    <th>KPI %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.line_ids" t-as="line">
+                                    <tr>
+                                        <td><span t-field="line.product_id.display_name"/></td>
+                                        <td><span t-field="line.product_category_id.name"/></td>
+                                        <td><span t-field="line.location_id.complete_name"/></td>
+                                        <td><span t-field="line.lot_id.name"/></td>
+                                        <td class="text-right"><span t-field="line.qty_system"/></td>
+                                        <td class="text-right"><span t-field="line.qty_counted"/></td>
+                                        <td class="text-right"><span t-field="line.qty_review_counted"/></td>
+                                        <td class="text-right">
+                                            <span t-field="line.qty_delta" 
+                                                  t-att-class="'text-danger' if line.qty_delta &lt; 0 else 'text-success' if line.qty_delta &gt; 0 else ''"/>
+                                        </td>
+                                        <td class="text-right"><span t-field="line.product_value_before"/></td>
+                                        <td class="text-right">
+                                            <span t-field="line.count_net_difference_value"
+                                                  t-att-class="'text-danger' if line.count_net_difference_value &lt; 0 else 'text-success' if line.count_net_difference_value &gt; 0 else ''"/>
+                                        </td>
+                                        <td class="text-right"><span t-field="line.variant_percentage_value"/>%</td>
+                                        <td class="text-right"><span t-field="line.accepted_product_diff_kpi"/>%</td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div class="row mt32">
+                            <div class="col-12">
+                                <strong>Notes:</strong><br/>
+                                <span t-field="doc.note"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

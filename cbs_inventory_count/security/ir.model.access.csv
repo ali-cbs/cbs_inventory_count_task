@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_inventory_count_session_manager,access_inventory_count_session_manager,model_inventory_count_session,stock.group_stock_manager,1,1,1,1
+access_inventory_count_session_user,access_inventory_count_session_user,model_inventory_count_session,stock.group_stock_user,1,1,1,0
+
+access_inventory_count_line_manager,access_inventory_count_line_manager,model_inventory_count_line,stock.group_stock_manager,1,1,1,1
+access_inventory_count_line_user,access_inventory_count_line_user,model_inventory_count_line,stock.group_stock_user,1,1,1,0
+
+access_inventory_count_refuse_wizard_stock_user,inventory.count.refuse.wizard.stock.user,model_inventory_count_refuse_wizard,stock.group_stock_user,1,1,1,1
+access_inventory_count_refuse_wizard_account_manager,inventory.count.refuse.wizard.account.manager,model_inventory_count_refuse_wizard,account.group_account_manager,1,1,1,1
